@@ -6,11 +6,11 @@ const vertex_ai = new VertexAI({
 });
 
 const model = vertex_ai.getGenerativeModel({
-  model: "gemini-1.5-pro",
+  model: "gemini-2.5-flash"
 });
 
 export const generateNextQuestion = async (req, res) => {
-  console.log("🔥 AI ROUTE HIT");
+  console.log(" AI ROUTE HIT");
 
   try {
 
@@ -176,21 +176,27 @@ export const aiHelpChat = async (req, res) => {
     const chatHistory = history
       .map((msg) => `${msg.role === 'user' ? 'User' : 'Bot'}: ${msg.text}`)
       .join('\n');
+const prompt = `
+You are an AI assistant for an unemployment claims portal.
 
-    const prompt = `
-You are a helpful AI assistant for unemployment claims.
+RULES:
+- Keep answers VERY SHORT (2-3 sentences max)
+- Be clear and simple
+- DO NOT give long explanations
+- Always ask ONE follow-up question at the end
+- Be conversational, like a real assistant
 
-- Be conversational
-- Help users understand forms
-- Guide them step-by-step
-- Keep answers simple and clear
+Examples:
 
-Conversation:
-${chatHistory}
+User: What is unemployment claim?
+Bot: It’s a request for financial support when you lose your job through no fault of your own. It helps cover expenses while you look for work. Are you currently filing a claim?
+
+User: How do I apply?
+Bot: You can apply through your state’s unemployment website by filling out your details and employment history. Have you started your application yet?
+
+Now respond to:
 
 User: ${message}
-
-Respond like a helpful assistant:
 `;
 
     const result = await model.generateContent({
